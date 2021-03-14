@@ -74,19 +74,19 @@ public class UploadController {
         return folderPath;
     }
 
-    @GetMapping("display")
+    @GetMapping("/display")
     public ResponseEntity<byte[]> getFile(String fileName) {
         ResponseEntity<byte[]> result = null;
         try {
-            String srcFileName = URLDecoder.decode(fileName, "UTF-8");
-            log.info("filename : " + srcFileName);
-            File file = new File(uploadPath + File.separator + srcFileName);
-            log.info("file : " + file);
-            HttpHeaders headers = new HttpHeaders();
+            String srcFileName =  URLDecoder.decode(fileName,"UTF-8");
+            log.info("fileName: " + srcFileName);
+            File file = new File(uploadPath +File.separator+ srcFileName);
+            log.info("file: " + file);
+            HttpHeaders header = new HttpHeaders();
             //MIME타입 처리
-            headers.add("Content-Type", Files.probeContentType(file.toPath()));
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
             //파일 데이터 처리
-            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
