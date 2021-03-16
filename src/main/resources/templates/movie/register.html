@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{/layout/basic::setContent(~{this::content})}">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
+
     <th:block th:fragment="content">
+
         <h1 class="mt-4">Movie Register Page</h1>
 
         <form th:action="@{/movie/register}" th:method="post">
@@ -17,41 +20,46 @@
                     <label class="custom-file-label" data-browse="Browse"></label>
                 </div>
             </div>
+
             <div class="box">
+
+            </div>
+
+            <style>
+                .uploadResult {
+                    width: 100%;
+                    background-color: gray;
+                    margin-top: 10px;
+                }
+
+                .uploadResult ul {
+                    display: flex;
+                    flex-flow: row;
+                    justify-content: center;
+                    align-items: center;
+                    vertical-align: top;
+                    overflow: auto;
+                }
+
+                .uploadResult ul li {
+                    list-style: none;
+                    padding: 10px;
+                    margin-left: 2em;
+                }
+
+                .uploadResult ul li img {
+                    width: 100px;
+                }
+            </style>
+
+            <div class="uploadResult">
+                <ul>
+
+                </ul>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <style>
-            .uploadResult {
-                width: 100%;
-                background-color: gray;
-                margin-top: 10px;
-            }
 
-            .uploadResult ul {
-                display: flex;
-                flex-flow: row;
-                justify-content: center;
-                align-items: center;
-                vertical-align: top;
-                overflow: auto;
-            }
-
-            .uploadResult ul li {
-                list-style: none;
-                padding: 10px;
-                margin-left: 2em;
-            }
-
-            .uploadResult ul li img {
-                width: 100px;
-            }
-        </style>
-        <div class="uploadResult">
-            <ul>
-
-            </ul>
-        </div>
         <script>
             $(document).ready(function (e) {
 
@@ -78,8 +86,11 @@
                     $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
 
                     var formData = new FormData();
+
                     var inputFile = $(this);
+
                     var files = inputFile[0].files;
+
                     var appended = false;
 
                     for (var i = 0; i < files.length; i++) {
@@ -120,25 +131,36 @@
                         }
                     }); //$.ajax
                 }); //end change event
+
+
                 function showResult(uploadResultArr) {
+
                     var uploadUL = $(".uploadResult ul");
+
                     var str = "";
+
                     $(uploadResultArr).each(function (i, obj) {
+
                         str += "<li data-name='" + obj.fileName + "' data-path='" + obj.folderPath + "' data-uuid='" + obj.uuid + "'>";
-                        str += "<div>";
+                        str + " <div>";
                         str += "<button type='button' data-file=\'" + obj.imageURL + "\' "
                         str += "class='btn-warning btn-sm'>X</button><br>";
                         str += "<img src='/display?fileName=" + obj.thumbnailURL + "'>";
                         str += "</div>";
-                        str += "</li>";
+                        str + "</li>";
                     });
+
                     uploadUL.append(str);
                 }
 
                 $(".uploadResult ").on("click", "li button", function (e) {
+
                     console.log("delete file");
+
                     var targetFile = $(this).data("file");
+
                     var targetLi = $(this).closest("li");
+
                     $.ajax({
                         url: '/removeFile',
                         data: {fileName: targetFile},
@@ -146,25 +168,41 @@
                         type: 'POST',
                         success: function (result) {
                             alert(result);
+
                             targetLi.remove();
                         }
                     }); //$.ajax
                 });
+
+
                 //prevent submit
                 $(".btn-primary").on("click", function (e) {
                     e.preventDefault();
+
                     var str = "";
+
                     $(".uploadResult li").each(function (i, obj) {
                         var target = $(obj);
+
                         str += "<input type='hidden' name='imageDTOList[" + i + "].imgName' value='" + target.data('name') + "'>";
+
                         str += "<input type='hidden' name='imageDTOList[" + i + "].path' value='" + target.data('path') + "'>";
+
                         str += "<input type='hidden' name='imageDTOList[" + i + "].uuid' value='" + target.data('uuid') + "'>";
+
                     });
+
                     //태그들이 추가된 것을 확인한 후에 comment를 제거
                     $(".box").html(str);
+
                     $("form").submit();
+
                 });
+
+
             }); //document ready
         </script>
+
     </th:block>
+
 </th:block>

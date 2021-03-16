@@ -28,8 +28,8 @@
                 <th scope="col">Regdate</th>
             </tr>
             </thead>
-
             <tbody>
+
             <tr th:each="dto : ${result.dtoList}" >
                 <th scope="row">
                     <a th:href="@{/movie/read(mno = ${dto.mno}, page= ${result.page})}">
@@ -42,8 +42,8 @@
                 <td><b>[[${dto.avg}]]</b></td>
                 <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
             </tr>
-            </tbody>
 
+            </tbody>
         </table>
 
         <ul class="pagination h-100 justify-content-center align-items-center">
@@ -61,9 +61,11 @@
             <li class="page-item" th:if="${result.next}">
                 <a class="page-link" th:href="@{/movie/list(page= ${result.end + 1} )}">Next</a>
             </li>
-
         </ul>
+
+
         <script th:inline="javascript">
+
         </script>
     </th:block>
 
