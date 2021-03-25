@@ -49,8 +49,9 @@ public class MovieRepositoryTests {
     public void testListPage() {
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "mno"));
         Page<Object[]> result = movieRepository.getListPage(pageRequest);
-        for(Object[] objects : result.getContent())
+        for(Object[] objects : result.getContent()) {
             System.out.println(Arrays.toString(objects));
+        }
     }
 
     @Test
