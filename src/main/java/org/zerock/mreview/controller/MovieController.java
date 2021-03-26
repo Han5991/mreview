@@ -22,6 +22,7 @@ public class MovieController {
 
     @GetMapping("/register")
     public void register() {
+
     }
 
     @PostMapping("/register")
