@@ -12,13 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.zerock.board.entity.Board;
-import org.zerock.board.entity.QBoard;
-import org.zerock.board.entity.QMember;
-import org.zerock.board.entity.QReply;
-import org.zerock.mreview.entity.Movie;
-import org.zerock.mreview.entity.QMember;
-import org.zerock.mreview.entity.QMovie;
+import org.zerock.mreview.entity.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,22 +21,24 @@ import java.util.stream.Collectors;
 public class SearchBoardRepositotyImpl extends QuerydslRepositorySupport implements SearchBoardRepositoty {
 
     public SearchBoardRepositotyImpl() {
-        super(Movie.class);
+        super(Review.class);
     }
 
     @Override
     public Movie serch1() {
         log.info("search1...............");
-        QMovie movie = QMovie.movie;
-        QReply reply = QReply.reply;
+        QReview review = QReview.review;
+//        QMovie movie = QMovie.movie;
+//        QReply reply = QReply.reply;
         QMember member = QMember.member;
 
-        JPQLQuery<Movie> jpqlQuery = from(movie);
-        jpqlQuery.leftJoin(member).on(movie.writer.eq(member));
-        jpqlQuery.leftJoin(reply).on(reply.board.eq(board));
+        JPQLQuery<Review> jpqlQuery = from(review);
+//        jpqlQuery.leftJoin(member).on(review.writer.eq(member));
+//        jpqlQuery.leftJoin(reply).on(reply.board.eq(review));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(board, member.email, reply.count());
-        tuple.groupBy(board);
+//        JPQLQuery<Tuple> tuple = jpqlQuery.select(movie, member.email, reply.count());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(review, member.email);
+        tuple.groupBy(review);
 
         log.info("========================");
         log.info(tuple);
@@ -56,20 +52,20 @@ public class SearchBoardRepositotyImpl extends QuerydslRepositorySupport impleme
     @Override
     public Page<Object[]> searchPage(String type, String keyword, Pageable pageable) {
         log.info("searchPage..............");
-        QBoard board = QBoard.board;
-        QReply reply = QReply.reply;
+        QMovie movie = QMovie.movie;
+//        QReply reply = QReply.reply;
         QMember member = QMember.member;
 
-        JPQLQuery<Board> jpqlQuery = from(board);
-        jpqlQuery.leftJoin(member).on(board.writer.eq(member));
-        jpqlQuery.leftJoin(reply).on(reply.board.eq(board));
+        JPQLQuery<Movie> jpqlQuery = from(movie);
+//        jpqlQuery.leftJoin(member).on(board.writer.eq(member));
+//        jpqlQuery.leftJoin(reply).on(reply.board.eq(board));
 
         //select b, w , count(r) from board b
         //left join b.writer w left join reply r on r.board = b
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(board, member, reply.count());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(movie, member);
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();//where 생성
-        booleanBuilder.and(board.bno.gt(0L));
+        booleanBuilder.and(movie.mno.gt(0L));
 
         if (type != null) {
             String[] typearr = type.split("");
@@ -78,14 +74,14 @@ public class SearchBoardRepositotyImpl extends QuerydslRepositorySupport impleme
             for (String t : typearr) {
                 switch (t) {
                     case "t":
-                        conditionBuilder.or(board.title.contains(keyword));
+                        conditionBuilder.or(movie.title.contains(keyword));
                         break;
                     case "w":
                         conditionBuilder.or(member.email.contains(keyword));
                         break;
-                    case "c":
-                        conditionBuilder.or(board.content.contains(keyword));
-                        break;
+//                    case "c":
+//                        conditionBuilder.or(board.content.contains(keyword));
+//                        break;
                 }
             }
             booleanBuilder.and(conditionBuilder);
@@ -95,10 +91,10 @@ public class SearchBoardRepositotyImpl extends QuerydslRepositorySupport impleme
         Sort sort = pageable.getSort();
         sort.stream().forEach(order -> {
             Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-            PathBuilder orderByExpression = new PathBuilder(Board.class, "board");
+            PathBuilder orderByExpression = new PathBuilder(Movie.class, "board");
             tuple.orderBy((new OrderSpecifier(direction, orderByExpression.get(order.getProperty()))));
         });
-        tuple.groupBy(board);
+        tuple.groupBy(movie);
         //page 처리
         tuple.offset(pageable.getOffset());
         tuple.limit(pageable.getPageSize());
