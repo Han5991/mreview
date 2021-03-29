@@ -46,14 +46,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="dto : ${result.dtoList}" >
+            <tr th:each="dto : ${result.dtoList}">
                 <th scope="row">
                     <a th:href="@{/movie/read(mno = ${dto.mno}, page= ${result.page})}">
                         [[${dto.mno}]]
                     </a>
                 </th>
                 <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
-                         th:src="|/display?fileName=${dto.imageDTOList[0].getThumbnailURL()}|" >[[${dto.title}]]</td>
+                         th:src="|/display?fileName=${dto.imageDTOList[0].getThumbnailURL()}|">[[${dto.title}]]
+                </td>
                 <td><b>[[${dto.reviewCnt}]]</b></td>
                 <td><b>[[${dto.avg}]]</b></td>
                 <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
