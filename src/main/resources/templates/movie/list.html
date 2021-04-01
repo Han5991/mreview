@@ -77,6 +77,7 @@
             <li class="page-item" th:if="${result.next}">
                 <a class="page-link" th:href="@{/movie/list(page= ${result.end + 1} )}">Next</a>
             </li>
+
         </ul>
 
         <script th:inline="javascript">
